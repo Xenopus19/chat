@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+  "username": "username2",
+  "password": "password123",
+  "birthdate": "2000-01-01",
+  "description": "This is a test user",
+  "avatarUrl": "https://picsum.photos/200"
+}

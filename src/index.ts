@@ -1,19 +1,22 @@
-import cors from "cors";
-import dotenv from "dotenv";
-import express from "express";
+import { PORT } from "./config";
+import { connectDatabase } from "./database";
+import app from "./app";
 
-dotenv.config();
+const startServer = async () => {
+  try {
+    await connectDatabase();
+    // eslint-disable-next-line no-console
+    console.log("MongoDB connected");
 
-const app = express();
-const port = Number(process.env.PORT) || 3000;
+    app.listen(PORT, () => {
+      // eslint-disable-next-line no-console
+      console.log(`Server on http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error("Failed to start server", error);
+    process.exit(1);
+  }
+};
 
-app.use(cors());
-app.use(express.json());
-
-app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok", service: "backend", timestamp: new Date().toISOString() });
-});
-
-app.listen(port, () => {
-  console.log(`Backend server running on http://localhost:${port}`);
-});
+startServer();
