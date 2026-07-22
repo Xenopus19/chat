@@ -11,7 +11,8 @@
     "lint:fix": "npm run lint:backend:fix",
     "lint:backend": "eslint .",
     "lint:backend:fix": "eslint . --fix",
-    "lint:client": "npm --prefix client run lint"
+    "lint:client": "npm --prefix client run lint",
+    "install:all": "npm install && npm install --prefix client"
   },
   "repository": {
     "type": "git",
