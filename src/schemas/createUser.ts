@@ -10,4 +10,6 @@ export const CreateUserSchema = z.object({
   avatarUrl: z.string().url("Invalid URL").nullable().optional(),
 });
 
+export const LoginSchema = CreateUserSchema.pick({ username: true, password: true });
+
 export type NewUser = z.infer<typeof CreateUserSchema>;

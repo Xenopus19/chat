@@ -4,7 +4,7 @@ import { getUploadUrl } from "../s3";
 import { UploadFileSchema } from "../schemas/uploadFile";
 const imageRouter = Router();
 
-imageRouter.get("/uploadUrl", async (req, res) => {
+imageRouter.post("/uploadUrl", async (req, res) => {
   try {
     const uploadData = UploadFileSchema.parse(req.body);
     const uniqueKey = `${uuidv4()}-${uploadData.fileName.replace(/\s+/g, "_")}`;
