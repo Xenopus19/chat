@@ -1,5 +1,6 @@
 import "./App.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
 import SignUp from "./components/SignUp";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -29,11 +30,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/chats",
-        element: <MyChats />,
+        element: (
+          <ProtectedRoute>
+            <MyChats />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/users",
-        element: <UsersList />,
+        element: (
+          <ProtectedRoute>
+            <UsersList />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
