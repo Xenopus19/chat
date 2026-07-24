@@ -32,6 +32,6 @@ export const login = async (username: string, password: string) => {
     const token = jwt.sign(tokenUser, JWT_SECRET);
     return { token, user: tokenUser };
   } catch (error) {
-    throw new Error("Error during login: " + (error instanceof Error ? error.message : String(error)));
+    throw new Error("Login error: " + (error instanceof Error ? error.message : String(error)));
   }
 };

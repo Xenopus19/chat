@@ -2,6 +2,8 @@ import { Router } from "express";
 import { CreateUserSchema, NewUser } from "../schemas/createUser";
 import { addUser, getAllUsers, getUserById } from "../services/usersService";
 import tokenExtractor, { CustomRequest } from "../middleware/tokenExtractor";
+import mongoose from "mongoose";
+import isMongoError from "../utils/isMongoError";
 
 const userRouter = Router();
 
@@ -44,9 +46,26 @@ userRouter.post("/", async (req, res) => {
     const user = await addUser(newUser);
     res.json(user);
   } catch (error) {
-    res.status(400).json({
-      message: "Error posting a user",
-      details: error instanceof Error ? error.message : error,
+    console.log("=== DEBUG ERROR START ===");
+  console.log("Constructor name:", (error as object)?.constructor?.name);
+  console.log("Error code property:", (error as any)?.code);
+  console.log("Full error object keys:", error instanceof Object ? Reflect.ownKeys(error) : typeof error);
+  console.log("=== DEBUG ERROR END ===");
+    if (
+      error instanceof mongoose.mongo.MongoServerError &&
+      error.code === 11000
+    ) {
+      return res.status(409).json({
+        message: "Username is taken",
+      });
+    }
+    if (error instanceof mongoose.Error.CastError) {
+      return res.status(400).json({
+        message: `Invalid format for ${error.path}`,
+      });
+    }
+    return res.status(500).json({
+      message: "An unexpected server error occurred.",
     });
   }
 });

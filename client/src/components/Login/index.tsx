@@ -1,15 +1,18 @@
 import type { LoginInfoType } from "./LoginSchema";
 import LoginForm from "./LoginForm";
 import useLogin from "../../hooks/useLogin";
+import { handleApiError } from "../../utils/handleApiError";
+import { useAppDispatch } from "@/store/hooks";
 
 const Login = () => {
   const { login } = useLogin();
+  const dispatch = useAppDispatch();
 
   const handleLogin = async (data: LoginInfoType) => {
     try {
       await login(data);
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      handleApiError(error, dispatch, "Login failed. Please check your credentials and try again.");
     }
   };
 

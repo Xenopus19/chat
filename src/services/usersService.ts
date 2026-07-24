@@ -1,7 +1,6 @@
 import { User } from "../models/User";
-import {  NewUser } from "../schemas/createUser";
+import { NewUser } from "../schemas/createUser";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 export const getAllUsers = async () => {
   try {
@@ -13,20 +12,16 @@ export const getAllUsers = async () => {
 };
 
 export const addUser = async (newUser: NewUser) => {
-    try {
-        const hashedPassword: string = await bcrypt.hash(newUser.password, 10);
-        const { password: _, ...userWithoutPassword } = newUser;
-    
-        const user = new User({
-          ...userWithoutPassword,
-          passwordHash: hashedPassword,
-        });
-        await user.save();
-        return user;
-      } catch (error) {
-        throw new Error(error instanceof Error ? error.message : String(error));
-      }
-}
+  const hashedPassword: string = await bcrypt.hash(newUser.password, 10);
+  const { password: _, ...userWithoutPassword } = newUser;
+
+  const user = new User({
+    ...userWithoutPassword,
+    passwordHash: hashedPassword,
+  });
+  await user.save();
+  return user;
+};
 
 export const getUserById = async (id: string) => {
   try {
@@ -39,4 +34,3 @@ export const getUserById = async (id: string) => {
     throw new Error(error instanceof Error ? error.message : String(error));
   }
 };
-    
