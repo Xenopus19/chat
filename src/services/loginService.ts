@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { JWT_SECRET } from "../config";
 import { User } from "../models/User";
 
-interface TokenUser {
+export interface TokenUser {
   id: string;
   username: string;
 }

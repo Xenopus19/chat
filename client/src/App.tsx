@@ -8,6 +8,7 @@ import { store } from "./store";
 import AppLayout from "./components/AppLayout";
 import MainPage from "./components/MainPage";
 import Login from "./components/Login";
+import AuthSync from "./AuthSync";
 
 const router = createBrowserRouter([
   {

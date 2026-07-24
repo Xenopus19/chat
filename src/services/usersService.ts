@@ -27,4 +27,16 @@ export const addUser = async (newUser: NewUser) => {
         throw new Error(error instanceof Error ? error.message : String(error));
       }
 }
+
+export const getUserById = async (id: string) => {
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  } catch (error) {
+    throw new Error(error instanceof Error ? error.message : String(error));
+  }
+};
     

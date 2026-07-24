@@ -7,8 +7,16 @@ const createUser = async (data: SignUpRequestType) => {
 };
 
 const loginUser = async (username: string, password: string) => {
-  const response = await api.post("/login", {username, password});
+  const response = await api.post("/login", { username, password });
   return response.data;
 };
 
-export { createUser, loginUser };
+const getMe = async (token: string | null) => {
+  if (!token) {
+    throw new Error("No token provided");
+  }
+  const response = await api.get("/users/me");
+  return response.data;
+};
+
+export { createUser, loginUser, getMe };
