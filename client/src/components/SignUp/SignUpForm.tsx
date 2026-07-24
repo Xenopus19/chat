@@ -25,58 +25,89 @@ const SignUpForm = ({ onSubmit }: SignUpFormProps) => {
   };
 
   return (
-    <div className="max-w-md mx-auto">
+    <div className="mx-auto max-w-md">
       <form className="flex flex-col gap-5" onSubmit={form.handleSubmit(submit)}>
         <Field>
-          <FieldLabel>Username</FieldLabel>
-          <Input autoComplete='username' {...form.register("username")} />
-          <FieldDescription>Public username.</FieldDescription>
+          <FieldLabel className="text-emerald-800 dark:text-emerald-200">Username</FieldLabel>
+          <Input
+            autoComplete="username"
+            className="border-emerald-500/30 bg-white focus-visible:border-emerald-500 focus-visible:ring-emerald-500/30 dark:bg-emerald-950/25"
+            {...form.register("username")}
+          />
+          <FieldDescription className="text-emerald-700/80 dark:text-emerald-300/80">
+            Public username.
+          </FieldDescription>
           {form.formState.errors.username && (
             <FieldError>{form.formState.errors.username.message}</FieldError>
           )}
         </Field>
 
         <Field>
-          <FieldLabel>Password</FieldLabel>
-          <Input autoComplete='current-password' type="password" {...form.register("password")} />
-          <FieldDescription>Your password.</FieldDescription>
+          <FieldLabel className="text-emerald-800 dark:text-emerald-200">Password</FieldLabel>
+          <Input
+            autoComplete="current-password"
+            type="password"
+            className="border-emerald-500/30 bg-white focus-visible:border-emerald-500 focus-visible:ring-emerald-500/30 dark:bg-emerald-950/25"
+            {...form.register("password")}
+          />
+          <FieldDescription className="text-emerald-700/80 dark:text-emerald-300/80">
+            Your password.
+          </FieldDescription>
           {form.formState.errors.password && (
             <FieldError>{form.formState.errors.password.message}</FieldError>
           )}
         </Field>
 
         <Field>
-          <FieldLabel>Description</FieldLabel>
+          <FieldLabel className="text-emerald-800 dark:text-emerald-200">Description</FieldLabel>
           <Textarea
-            className="resize-none"
+            className="resize-none border-emerald-500/30 bg-white focus-visible:border-emerald-500 focus-visible:ring-emerald-500/30 dark:bg-emerald-950/25"
             {...form.register("description")}
           />
-          <FieldDescription>Your profile description.</FieldDescription>
+          <FieldDescription className="text-emerald-700/80 dark:text-emerald-300/80">
+            Your profile description.
+          </FieldDescription>
           {form.formState.errors.description && (
             <FieldError>{form.formState.errors.description.message}</FieldError>
           )}
         </Field>
 
         <Field>
-          <FieldLabel>Date of Birth</FieldLabel>
-          <Input type="date" {...form.register("birthdate")} />
-          <FieldDescription>Your date of birth.</FieldDescription>
+          <FieldLabel className="text-emerald-800 dark:text-emerald-200">Date of Birth</FieldLabel>
+          <Input
+            type="date"
+            className="border-emerald-500/30 bg-white focus-visible:border-emerald-500 focus-visible:ring-emerald-500/30 dark:bg-emerald-950/25"
+            {...form.register("birthdate")}
+          />
+          <FieldDescription className="text-emerald-700/80 dark:text-emerald-300/80">
+            Your date of birth.
+          </FieldDescription>
           {form.formState.errors.birthdate && (
             <FieldError>{form.formState.errors.birthdate.message}</FieldError>
           )}
         </Field>
 
         <Field>
-          <FieldLabel>Profile picture</FieldLabel>
-          <Input type="file" {...form.register("avatar")} />
-          <FieldDescription>Your avatar.</FieldDescription>
+          <FieldLabel className="text-emerald-800 dark:text-emerald-200">Profile picture</FieldLabel>
+          <Input
+            type="file"
+            className="border-emerald-500/30 bg-white file:text-emerald-700 focus-visible:border-emerald-500 focus-visible:ring-emerald-500/30 dark:bg-emerald-950/25 dark:file:text-emerald-300"
+            {...form.register("avatar")}
+          />
+          <FieldDescription className="text-emerald-700/80 dark:text-emerald-300/80">
+            Your avatar.
+          </FieldDescription>
           {form.formState.errors.avatar && (
             <FieldError>{form.formState.errors.avatar.message as string}</FieldError>
           )}
         </Field>
 
-
-        <Button type="submit">Sign Up</Button>
+        <Button
+          type="submit"
+          className="bg-emerald-600 text-white hover:bg-emerald-700"
+        >
+          Sign Up
+        </Button>
       </form>
     </div>
   );

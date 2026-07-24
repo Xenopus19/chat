@@ -9,7 +9,7 @@ const SignUp = () => {
   const { uploadImage } = useUploadImage();
   const { login } = useLogin();
   const createUserMutation = useMutation({ mutationFn: createUser });
-  
+
   const handleSubmit = async (data: SignUpInfoType) => {
     try {
       const key = await uploadImage(data.avatar[0]);
@@ -23,11 +23,20 @@ const SignUp = () => {
       console.error("Error during sign up:", error);
     }
   };
+
   return (
-    <div>
-      <p className="text-2xl mb-5 font-bold text-center">Create account</p>
+    <section className="relative mx-auto max-w-xl overflow-hidden rounded-3xl border border-emerald-500/20 bg-linear-to-br from-emerald-500/10 via-background to-background p-6 sm:p-8">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-16 -right-16 h-44 w-44 rounded-full bg-emerald-500/20 blur-3xl"
+      />
+      <div className="relative">
+        <p className="mb-5 text-center text-2xl font-bold text-emerald-700 dark:text-emerald-400">
+          Create account
+        </p>
+      </div>
       <SignUpForm onSubmit={handleSubmit} />
-    </div>
+    </section>
   );
 };
 

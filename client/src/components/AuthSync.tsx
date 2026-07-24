@@ -1,8 +1,8 @@
 import { useEffect, type ReactNode } from "react";
-import useMe from "./hooks/useMe";
-import { useAppDispatch } from "./store/hooks";
-import { setUser } from "./reducers/user";
-import useLogout from "./hooks/useLogout";
+import useMe from "../hooks/useMe";
+import { useAppDispatch } from "../store/hooks";
+import { setUser } from "../reducers/user";
+import useLogout from "../hooks/useLogout";
 
 type AuthSyncProps = {
   children: ReactNode;

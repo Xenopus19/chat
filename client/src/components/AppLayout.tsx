@@ -1,10 +1,38 @@
-import { Outlet } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, Outlet } from "react-router-dom";
 import ThemeSwitch from "./ThemeSwitch";
 import { useAppSelector } from "@/store/hooks";
-import AuthSync from "@/AuthSync";
+import AuthSync from "@/components/AuthSync";
+import { Button } from "./ui/button";
+import useLogout from "@/hooks/useLogout";
 
 const AppLayout = () => {
   const user = useAppSelector((state) => state.user.data);
+  const logout = useLogout();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setIsUserMenuOpen(false);
+    }
+  }, [user]);
 
   return (
     <AuthSync>
@@ -19,16 +47,51 @@ const AppLayout = () => {
             </div>
             <div className="flex items-center gap-3">
               {user && (
-                <div className="h-9 w-9 overflow-hidden rounded-full border border-emerald-500/30 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200">
-                  {user.avatarUrl ? (
-                    <img
-                      src={user.avatarUrl}
-                      alt={`${user.username} avatar`}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-sm font-semibold uppercase">
-                      {user.username.charAt(0)}
+                <div ref={userMenuRef} className="relative">
+                  <button
+                    type="button"
+                    className="h-9 w-9 overflow-hidden rounded-full border border-emerald-500/30 bg-emerald-100 text-emerald-700 transition hover:border-emerald-500/60 dark:bg-emerald-900/40 dark:text-emerald-200"
+                    onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                    aria-haspopup="menu"
+                    aria-expanded={isUserMenuOpen}
+                    aria-label="Open user menu"
+                  >
+                    {user.avatarUrl ? (
+                      <img
+                        src={user.avatarUrl}
+                        alt={`${user.username} avatar`}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-sm font-semibold uppercase">
+                        {user.username.charAt(0)}
+                      </div>
+                    )}
+                  </button>
+
+                  {isUserMenuOpen && (
+                    <div
+                      role="menu"
+                      className="absolute right-0 top-12 z-50 w-44 rounded-2xl border border-emerald-500/20 bg-background/95 p-2 shadow-lg backdrop-blur"
+                    >
+                      <Link to="/chats" onClick={() => setIsUserMenuOpen(false)}>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-emerald-700 hover:bg-emerald-50 dark:text-emerald-300 dark:hover:bg-emerald-950/40"
+                        >
+                          My chats
+                        </Button>
+                      </Link>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-rose-700 hover:bg-rose-50 dark:text-rose-300 dark:hover:bg-rose-950/40"
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          logout();
+                        }}
+                      >
+                        Logout
+                      </Button>
                     </div>
                   )}
                 </div>

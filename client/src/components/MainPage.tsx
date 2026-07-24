@@ -40,23 +40,47 @@ const MainPage = () => {
             </p>
           </CardContent>
           <CardFooter className="gap-3 border-t border-emerald-500/15">
-            <Link to="/signup">
-              <Button
-                size="sm"
-                className="bg-emerald-600 text-white hover:bg-emerald-700"
-              >
-                Create Account
-              </Button>
-            </Link>
-            <Link to="/login">
-              <Button
-                variant="secondary"
-                size="sm"
-                className="border-emerald-500/20 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300"
-              >
-                Login
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Link to="/users">
+                  <Button
+                    size="sm"
+                    className="bg-emerald-600 text-white hover:bg-emerald-700"
+                  >
+                    Find Users
+                  </Button>
+                </Link>
+                <Link to="/chats">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="border-emerald-500/20 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300"
+                  >
+                    My Chats
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to="/signup">
+                  <Button
+                    size="sm"
+                    className="bg-emerald-600 text-white hover:bg-emerald-700"
+                  >
+                    Create Account
+                  </Button>
+                </Link>
+                <Link to="/login">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="border-emerald-500/20 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300"
+                  >
+                    Login
+                  </Button>
+                </Link>
+              </>
+            )}
           </CardFooter>
         </Card>
       </div>

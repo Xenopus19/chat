@@ -8,7 +8,8 @@ import { store } from "./store";
 import AppLayout from "./components/AppLayout";
 import MainPage from "./components/MainPage";
 import Login from "./components/Login";
-import AuthSync from "./AuthSync";
+import MyChats from "./components/MyChats";
+import UsersList from "./components/UsersList";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,14 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <Login />,
+      },
+      {
+        path: "/chats",
+        element: <MyChats />,
+      },
+      {
+        path: "/users",
+        element: <UsersList />,
       },
     ],
   },
