@@ -1,5 +1,6 @@
 import api from "@/api";
 import type { SignUpRequestType } from "@/components/SignUp/SignUpSchema";
+import type { User } from "@/types";
 
 const createUser = async (data: SignUpRequestType) => {
   const response = await api.post("/users", data);
@@ -19,4 +20,9 @@ const getMe = async (token: string | null) => {
   return response.data;
 };
 
-export { createUser, loginUser, getMe };
+const getAllUsers = async () => {
+  const response = await api.get<User[]>("/users");
+  return response.data;
+}
+
+export { createUser, loginUser, getMe, getAllUsers };

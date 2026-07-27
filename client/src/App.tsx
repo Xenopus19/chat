@@ -10,7 +10,8 @@ import AppLayout from "./components/AppLayout";
 import MainPage from "./components/MainPage";
 import Login from "./components/Login";
 import MyChats from "./components/MyChats";
-import UsersList from "./components/UsersList";
+import UsersList from "./components/Users";
+import Users from "./components/Users";
 
 const router = createBrowserRouter([
   {
@@ -40,7 +41,7 @@ const router = createBrowserRouter([
         path: "/users",
         element: (
           <ProtectedRoute>
-            <UsersList />
+            <Users />
           </ProtectedRoute>
         ),
       },
