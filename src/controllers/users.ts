@@ -3,7 +3,6 @@ import { CreateUserSchema, NewUser } from "../schemas/createUser";
 import { addUser, getAllUsers, getUserById } from "../services/usersService";
 import tokenExtractor, { CustomRequest } from "../middleware/tokenExtractor";
 import mongoose from "mongoose";
-import isMongoError from "../utils/isMongoError";
 
 const userRouter = Router();
 

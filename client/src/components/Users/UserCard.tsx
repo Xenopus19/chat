@@ -1,6 +1,9 @@
 import { useState } from "react";
 import type { User } from "@/types";
 import { Button } from "../ui/button";
+import { useNavigate } from "react-router-dom";
+import { createOrGetChat } from "@/services/chatService";
+import { useMutation } from "@tanstack/react-query";
 
 interface UserCardProps {
   user: User;
@@ -41,6 +44,17 @@ const UserCard = ({ user }: UserCardProps) => {
   const name = user.username || "Unknown User";
   const avatar = user.avatarUrl ?? "";
   const initials = name.slice(0, 2).toUpperCase();
+  const navigate = useNavigate();
+  const getChatIdMutation = useMutation({ mutationFn: createOrGetChat });
+
+  const goToChat = async () => {
+    try {
+      const chat = await getChatIdMutation.mutateAsync(user.id);
+      navigate(`/chats/${chat.id}`);
+    } catch (error) {
+      console.error("Failed to get or create chat:", error);
+    }
+  };
 
   return (
     <article className="overflow-hidden rounded-2xl border border-emerald-200 bg-linear-to-b from-emerald-50 to-white shadow-sm transition-shadow duration-200 hover:shadow-md">
@@ -60,7 +74,9 @@ const UserCard = ({ user }: UserCardProps) => {
         )}
 
         <div className="min-w-0 flex-1">
-          <p className="truncate text-base font-semibold text-emerald-950">{name}</p>
+          <p className="truncate text-base font-semibold text-emerald-950">
+            {name}
+          </p>
           <p className="text-xs text-emerald-700">
             Member since {formatDate(user.createdAt)}
           </p>
@@ -71,7 +87,11 @@ const UserCard = ({ user }: UserCardProps) => {
           variant={open ? "outline" : "default"}
           size="sm"
           onClick={() => setOpen((v) => !v)}
-          className={open ? "border-emerald-300 text-emerald-900" : "bg-emerald-600 text-white hover:bg-emerald-700"}
+          className={
+            open
+              ? "border-emerald-300 text-emerald-900"
+              : "bg-emerald-600 text-white hover:bg-emerald-700"
+          }
         >
           {open ? "Close" : "Details"}
         </Button>
@@ -81,9 +101,7 @@ const UserCard = ({ user }: UserCardProps) => {
         <div className="space-y-4 px-4 py-4">
           <div className="grid gap-2 sm:grid-cols-2">
             <Field label="Username" value={user.username} />
-            <Field label="User ID" value={user.id} />
             <Field label="Birthdate" value={formatDate(user.birthdate)} />
-            <Field label="Updated" value={formatDate(user.updatedAt)} />
           </div>
 
           <div className="rounded-xl border border-emerald-100 bg-white p-3">
@@ -97,6 +115,7 @@ const UserCard = ({ user }: UserCardProps) => {
 
           <div className="flex justify-end">
             <Button
+              onClick={goToChat}
               type="button"
               variant="default"
               size="sm"

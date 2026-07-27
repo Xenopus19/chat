@@ -12,6 +12,7 @@ import Login from "./components/Login";
 import MyChats from "./components/MyChats";
 import UsersList from "./components/Users";
 import Users from "./components/Users";
+import Chat from "./components/Chat";
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Users />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/chats/:id",
+        element: (
+          <ProtectedRoute>
+            <Chat />
           </ProtectedRoute>
         ),
       },
