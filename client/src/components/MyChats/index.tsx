@@ -1,9 +1,45 @@
+import { getUserChats } from "@/services/chatService";
+import { useAppDispatch } from "@/store/hooks";
+import { handleApiError } from "@/utils/handleApiError";
+import { useQuery } from "@tanstack/react-query";
+import ChatsList from "./ChatsList";
+
 const MyChats = () => {
-    return (
-        <div>
-            My Chats Component
-        </div>
-    );
+  const {
+    data: chats,
+    isLoading,
+    error,
+    isError,
+  } = useQuery({
+    queryKey: ["userChats"],
+    queryFn: getUserChats,
+  });
+
+  const dispatch = useAppDispatch();
+
+  if (isLoading || !chats) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    handleApiError(error, dispatch, "Failed to fetch chats.");
+    return null;
+  }
+
+  return (
+    <section className="space-y-4">
+      <div>
+        <h1 className="font-heading text-2xl font-semibold text-emerald-800 dark:text-emerald-300">
+          My chats
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Jump back into your conversations.
+        </p>
+      </div>
+
+      <ChatsList chats={chats} />
+    </section>
+  );
 };
 
 export default MyChats;

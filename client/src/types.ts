@@ -7,3 +7,10 @@ export interface User {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Chat {
+  id: string;
+  name?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
