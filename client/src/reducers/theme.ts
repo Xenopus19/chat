@@ -7,7 +7,25 @@ interface ThemeState {
     theme: Theme;
 }
 
-const initialState: ThemeState = { theme: "light" };
+const isTheme = (value: unknown): value is Theme => {
+  return value === "light" || value === "dark";
+};
+
+const applyThemeToDOM = (theme: Theme) => {
+  const root = document.documentElement;
+  root.classList.remove("light", "dark");
+
+  root.classList.add(theme);
+};
+
+const getInitialState = (): ThemeState => {
+  const storageItem = localStorage.getItem('theme');
+  const theme = storageItem && isTheme(storageItem) ? storageItem : "light";
+  applyThemeToDOM(theme);
+  return { theme};
+}
+
+const initialState: ThemeState = getInitialState();
 
 
 const themeSlice = createSlice({
@@ -17,17 +35,11 @@ const themeSlice = createSlice({
     setTheme: (state, action: PayloadAction<Theme>) => {
         state.theme = action.payload;
         const newTheme = action.payload;
+        localStorage.setItem("theme", newTheme);
         applyThemeToDOM(newTheme);
     },
   },
 });
-
-const applyThemeToDOM = (theme: Theme) => {
-  const root = document.documentElement;
-  root.classList.remove("light", "dark");
-
-  root.classList.add(theme);
-};
 
 export const toggleTheme = () => {
     return (dispatch: AppDispatch, getState: () => { theme: ThemeState }) => {
