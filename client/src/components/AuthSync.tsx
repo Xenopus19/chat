@@ -9,16 +9,21 @@ type AuthSyncProps = {
 };
 
 const AuthSync = ({ children }: AuthSyncProps) => {
-  const { data: user, isError } = useMe();
+  const { data: user, isError, isLoading } = useMe();
   const dispatch = useAppDispatch();
   const logoutUser = useLogout();
+
   useEffect(() => {
     if (user) {
       dispatch(setUser(user));
-    } else if (isError) {
+    } else if (isError || (!isLoading && !user)) {
       logoutUser();
     }
-  }, [user, isError, dispatch]);
+  }, [user, isError, isLoading, dispatch]);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return <>{children}</>;
 };

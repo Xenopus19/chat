@@ -10,7 +10,6 @@ import AppLayout from "./components/AppLayout";
 import MainPage from "./components/MainPage";
 import Login from "./components/Login";
 import MyChats from "./components/MyChats";
-import UsersList from "./components/Users";
 import Users from "./components/Users";
 import Chat from "./components/Chat";
 
