@@ -4,27 +4,11 @@ import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import { createOrGetChat } from "@/services/chatService";
 import { useMutation } from "@tanstack/react-query";
+import { formatDate } from "@/utils/formatDate";
 
 interface UserCardProps {
   user: User;
 }
-
-const formatDate = (value: string) => {
-  if (!value) {
-    return "-";
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return "-";
-  }
-
-  return new Intl.DateTimeFormat(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "2-digit",
-  }).format(date);
-};
 
 const Field = ({ label, value }: { label: string; value: string }) => {
   return (
@@ -78,7 +62,7 @@ const UserCard = ({ user }: UserCardProps) => {
             {name}
           </p>
           <p className="text-xs text-emerald-700">
-            Member since {formatDate(user.createdAt)}
+            Member since {formatDate(user.createdAt, { fallback: "-" })}
           </p>
         </div>
 
@@ -101,7 +85,10 @@ const UserCard = ({ user }: UserCardProps) => {
         <div className="space-y-4 px-4 py-4">
           <div className="grid gap-2 sm:grid-cols-2">
             <Field label="Username" value={user.username} />
-            <Field label="Birthdate" value={formatDate(user.birthdate)} />
+            <Field
+              label="Birthdate"
+              value={formatDate(user.birthdate, { fallback: "-" })}
+            />
           </div>
 
           <div className="rounded-xl border border-emerald-100 bg-white p-3">
