@@ -1,6 +1,8 @@
+import { createServer } from "http";
 import { PORT } from "./config";
 import { connectDatabase } from "./database";
 import app from "./app";
+import { initSocket } from "./socket";
 
 const startServer = async () => {
   try {
@@ -8,7 +10,10 @@ const startServer = async () => {
     // eslint-disable-next-line no-console
     console.log("MongoDB connected");
 
-    app.listen(PORT, () => {
+    const httpServer = createServer(app);
+    initSocket(httpServer);
+
+    httpServer.listen(PORT, () => {
       // eslint-disable-next-line no-console
       console.log(`Server on http://localhost:${PORT}`);
     });

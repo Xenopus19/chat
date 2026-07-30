@@ -3,6 +3,7 @@ import useMe from "../hooks/useMe";
 import { useAppDispatch } from "../store/hooks";
 import { setUser } from "../reducers/user";
 import useLogout from "../hooks/useLogout";
+import { socket } from "@/socket";
 
 type AuthSyncProps = {
   children: ReactNode;
@@ -16,7 +17,18 @@ const AuthSync = ({ children }: AuthSyncProps) => {
   useEffect(() => {
     if (user) {
       dispatch(setUser(user));
+
+      const token = localStorage.getItem("token");
+      if (token) {
+        socket.auth = { token };
+        if (!socket.connected) {
+          socket.connect();
+        }
+      }
     } else if (isError || (!isLoading && !user)) {
+      if (socket.connected) {
+        socket.disconnect();
+      }
       logoutUser();
     }
   }, [user, isError, isLoading, dispatch]);

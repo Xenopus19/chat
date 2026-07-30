@@ -4,6 +4,8 @@ dotenv.config();
 
 export const PORT: number = parseInt(process.env.PORT || '3001', 10);
 
+export const CLIENT_ORIGIN: string = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
+
 export const DATABASE_URL: string = process.env.DATABASE_URL || process.env.MONGODB_URI || '';
 
 export const JWT_SECRET: string = process.env.JWT_SECRET || 'jwt_secret';

@@ -4,9 +4,10 @@ import userRouter from "./controllers/users";
 import imageRouter from "./controllers/images";
 import loginRouter from "./controllers/login";
 import chatsRouter from "./controllers/chats";
+import { CLIENT_ORIGIN } from "./config";
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: CLIENT_ORIGIN }));
 app.use(express.json());
 
 app.use('/api/users', userRouter);
