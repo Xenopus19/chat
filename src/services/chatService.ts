@@ -19,8 +19,9 @@ export const createOrFindChatByIds = async (
     return newChat;
 };
 
-export const getUserChats = async (userId: Types.ObjectId): Promise<ChatDocument[]> => {
-  const memberships = await ChatMembership.find({ userId }).select("chatId");
+export const getUserChats = async (userId: Types.ObjectId | string): Promise<ChatDocument[]> => {
+  const id = typeof userId === "string" ? new Types.ObjectId(userId) : userId;
+  const memberships = await ChatMembership.find({ userId: id }).select("chatId");
   const chatIds = memberships.map((membership) => membership.chatId);
   return Chat.find({ _id: { $in: chatIds } });
 }

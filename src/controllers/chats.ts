@@ -2,6 +2,7 @@ import { Router } from "express";
 import { Types } from "mongoose";
 import tokenExtractor, { CustomRequest } from "../middleware/tokenExtractor";
 import { createOrFindChatByIds, getUserChats } from "../services/chatService";
+import { joinUserToChatRoom } from "../socket";
 const chatsRouter = Router();
 
 chatsRouter.post("/", tokenExtractor, async (req: CustomRequest, res) => {
@@ -12,6 +13,9 @@ chatsRouter.post("/", tokenExtractor, async (req: CustomRequest, res) => {
     const userId1 = new Types.ObjectId(req.decodedToken.id);
     const userId2 = new Types.ObjectId(req.body.userId);
     const chat = await createOrFindChatByIds(userId1, userId2);
+
+    joinUserToChatRoom(req.decodedToken.id, chat.id);
+
     return res.json(chat);
   } catch (error) {
     return res.status(400).json({
