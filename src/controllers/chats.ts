@@ -44,7 +44,7 @@ chatsRouter.get("/", tokenExtractor, async (req: CustomRequest, res) => {
 chatsRouter.get("/:chatId", tokenExtractor, async (req: CustomRequest, res) => {
   try {
     const chatId = req.params.chatId;
-    if (!chatId) {
+    if (!chatId || typeof chatId !== "string") {
       return res.status(400).json({ message: "Chat ID is missing." });
     }
     const chat = await getChatById(new Types.ObjectId(chatId));

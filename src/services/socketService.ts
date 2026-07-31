@@ -5,7 +5,7 @@ import type {
 	ServerToClientEvents,
 	InterServerEvents,
 	SocketData,
-} from "../types.ts/socketTypes";
+} from "../types/socketTypes";
 import { getUserChats } from "./chatService";
 
 let io: Server<

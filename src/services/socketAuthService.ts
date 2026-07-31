@@ -1,5 +1,5 @@
 import { getUserByToken } from "./authService";
-import { SocketWithUserData } from "../types.ts/socketTypes";
+import { SocketWithUserData } from "../types/socketTypes";
 
 export const extractUserMiddleware = (
   socket: SocketWithUserData,

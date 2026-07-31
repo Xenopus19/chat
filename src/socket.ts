@@ -6,7 +6,8 @@ import type {
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
-} from "./types.ts/socketTypes";
+  MessageForClient,
+} from "./types/socketTypes";
 import { ZodError } from "zod";
 import { CLIENT_ORIGIN } from "./config";
 import { extractUserMiddleware } from "./services/socketAuthService";
@@ -58,7 +59,16 @@ export const initSocket = (httpServer: HttpServer): Server => {
         // eslint-disable-next-line no-console
         console.log(`Received message from user ${user.id}:`, message);
 
-        socket.to(message.chatId).emit("messageCreated", createdMessage);
+        const newMessageForClient: MessageForClient = {
+          id: createdMessage.id,
+          text: createdMessage.text,
+          chatId: createdMessage.chatId,
+          userId: createdMessage.userId,
+          createdAt: createdMessage.createdAt.toISOString(),
+          updatedAt: createdMessage.updatedAt.toISOString(),
+        };
+
+        io?.to(message.chatId).emit("messageCreated", newMessageForClient);
       } catch (error) {
         if (error instanceof ZodError) {
           console.warn(

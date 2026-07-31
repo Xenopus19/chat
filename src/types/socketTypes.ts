@@ -1,11 +1,11 @@
 import { Socket } from "socket.io";
-import { MessageType } from "../models/Message";
+import { MessageForClient } from "./index";
 import { NewMessage } from "../schemas/createMessage";
 import { TokenUser } from "../services/loginService";
 import ServerError from "./serverError";
 
 export interface ServerToClientEvents {
-  messageCreated: (message: MessageType) => void;
+  messageCreated: (message: MessageForClient) => void;
   exception: (error: ServerError) => void;
 }
 
