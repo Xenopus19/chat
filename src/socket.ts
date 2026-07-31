@@ -1,18 +1,39 @@
 import { Server as HttpServer } from "http";
 import { Server } from "socket.io";
-import type { SocketWithUserData } from "./services/socketAuthService";
+import type {
+  SocketWithUserData,
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData,
+} from "./types.ts/socketTypes";
+import { ZodError } from "zod";
 import { CLIENT_ORIGIN } from "./config";
 import { extractUserMiddleware } from "./services/socketAuthService";
-import { getUserChats } from "./services/chatService";
+import { CreateMessageSchema } from "./schemas/createMessage";
+import { addMessage } from "./services/messageService";
+import { joinSocketToUserChats, setSocketServer } from "./services/socketService";
 
-let io: Server | null = null;
+let io: Server<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData
+> | null = null;
 
 export const initSocket = (httpServer: HttpServer): Server => {
-  io = new Server(httpServer, {
+  io = new Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >(httpServer, {
     cors: {
       origin: CLIENT_ORIGIN,
     },
   });
+
+  setSocketServer(io);
 
   io.use(extractUserMiddleware);
 
@@ -24,19 +45,38 @@ export const initSocket = (httpServer: HttpServer): Server => {
       return;
     }
 
-    // eslint-disable-next-line no-console
-    console.log(`Socket connected: ${socket.id}`);
+    await joinSocketToUserChats(socket);
 
-    const userChats = await getUserChats(user.id);
-    const chatIds = userChats.map((chat) => chat.id);
-    chatIds.forEach((chatId) => {
-      socket.join(chatId);
-      console.log(`User ${user.id} joined chat room: ${chatId}`);
-    });
+    socket.on("createMessage", async (messageData) => {
+      try {
+        const message = CreateMessageSchema.parse(messageData);
+        const createdMessage = await addMessage({
+          ...message,
+          userId: user.id,
+        });
 
-    socket.on("disconnect", () => {
-      // eslint-disable-next-line no-console
-      console.log(`Socket disconnected: ${socket.id}`);
+        // eslint-disable-next-line no-console
+        console.log(`Received message from user ${user.id}:`, message);
+
+        socket.to(message.chatId).emit("messageCreated", createdMessage);
+      } catch (error) {
+        if (error instanceof ZodError) {
+          console.warn(
+            `Validation error for user ${user.id}:`,
+            error.flatten(),
+          );
+
+          socket.emit("exception", {
+            status: 400,
+            message: "Invalid message payload",
+          });
+        } else {
+          socket.emit("exception", {
+            status: 500,
+            message: "Failed to process message",
+          });
+        }
+      }
     });
   });
 
@@ -49,17 +89,4 @@ export const getIo = (): Server => {
   }
 
   return io;
-};
-
-export const joinUserToChatRoom = (userId: string, chatId: string): void => {
-  if (!io) {
-    return;
-  }
-
-  io.sockets.sockets.forEach((socket) => {
-    const typedSocket = socket as SocketWithUserData;
-    if (typedSocket.data.user?.id === userId) {
-      typedSocket.join(chatId);
-    }
-  });
 };

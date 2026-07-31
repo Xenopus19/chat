@@ -2,6 +2,10 @@ import { Types } from "mongoose";
 import { ChatMembership } from "../models/ChatMembership";
 import { Chat, type ChatDocument } from "../models/Chat";
 
+export const getChatById = async (chatId: Types.ObjectId): Promise<ChatDocument | null> => {
+    return await Chat.findById(chatId);
+}
+
 export const createOrFindChatByIds = async (
   userId1: Types.ObjectId,
   userId2: Types.ObjectId,

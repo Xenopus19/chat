@@ -1,13 +1,5 @@
-import { Socket } from "socket.io";
 import { getUserByToken } from "./authService";
-import { TokenUser } from "./loginService";
-
-export type SocketWithUserData = Socket<
-  Record<string, never>,
-  Record<string, never>,
-  Record<string, never>,
-  { user?: TokenUser }
->;
+import { SocketWithUserData } from "../types.ts/socketTypes";
 
 export const extractUserMiddleware = (
   socket: SocketWithUserData,

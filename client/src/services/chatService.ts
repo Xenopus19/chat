@@ -6,6 +6,11 @@ export const createOrGetChat = async (userId: string) => {
     return response.data;
 };
 
+export const fetchChatById = async (chatId: string) => {
+    const response = await api.get<Chat>(`/chats/${chatId}`);
+    return response.data;
+}
+
 export const getUserChats = async (): Promise<Chat[]> => {
     const response = await api.get(`/chats`);
     return response.data;

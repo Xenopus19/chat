@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { Types } from "mongoose";
 import tokenExtractor, { CustomRequest } from "../middleware/tokenExtractor";
-import { createOrFindChatByIds, getUserChats } from "../services/chatService";
-import { joinUserToChatRoom } from "../socket";
+import { createOrFindChatByIds, getChatById, getUserChats } from "../services/chatService";
+import { joinUserToChatRoom } from "../services/socketService";
 const chatsRouter = Router();
 
 chatsRouter.post("/", tokenExtractor, async (req: CustomRequest, res) => {
@@ -36,6 +36,22 @@ chatsRouter.get("/", tokenExtractor, async (req: CustomRequest, res) => {
   } catch (error) {
     return res.status(400).json({
       message: "Error creating or finding chat",
+      details: error instanceof Error ? error.message : String(error),
+    });
+  }
+});
+
+chatsRouter.get("/:chatId", tokenExtractor, async (req: CustomRequest, res) => {
+  try {
+    const chatId = req.params.chatId;
+    if (!chatId) {
+      return res.status(400).json({ message: "Chat ID is missing." });
+    }
+    const chat = await getChatById(new Types.ObjectId(chatId));
+    return res.json(chat);
+  } catch (error) {
+    return res.status(400).json({
+      message: "Error fetching chat",
       details: error instanceof Error ? error.message : String(error),
     });
   }
