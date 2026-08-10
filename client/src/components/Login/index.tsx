@@ -3,6 +3,7 @@ import LoginForm from "./LoginForm";
 import useLogin from "../../hooks/useLogin";
 import { handleApiError } from "../../utils/handleApiError";
 import { useAppDispatch } from "@/store/hooks";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const { login } = useLogin();
@@ -25,6 +26,16 @@ const Login = () => {
       <div className="relative">
         <p className="mb-5 text-center text-2xl font-bold text-emerald-700 dark:text-emerald-400">
           Log into existing account
+        </p>
+        <p className="mb-5 text-center text-sm text-muted-foreground">
+          If you don't have an account, {" "}
+          <Link
+            to="/signup"
+            className="font-semibold text-emerald-700 underline underline-offset-4 hover:text-emerald-600 dark:text-emerald-400 dark:hover:text-emerald-300"
+          >
+            create one
+          </Link>
+          .
         </p>
       </div>
       <LoginForm onSubmit={handleLogin} />

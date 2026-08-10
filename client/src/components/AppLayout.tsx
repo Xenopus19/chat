@@ -75,6 +75,9 @@ const AppLayout = () => {
                       role="menu"
                       className="absolute right-0 top-12 z-50 w-44 rounded-2xl border border-emerald-500/20 bg-background/95 p-2 shadow-lg backdrop-blur"
                     >
+                      <p className="mb-2 block truncate px-3 text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                        {user.username}
+                      </p>
                       <Link
                         to="/chats"
                         onClick={() => setIsUserMenuOpen(false)}
