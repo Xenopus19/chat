@@ -1,7 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { MessagesSquareIcon } from "lucide-react";
 import { fetchChatById } from "@/services/chatService";
 import { getMessagesByChatId } from "@/services/messageService";
 import type { Message } from "@/types";
@@ -9,6 +8,7 @@ import { useAppSelector } from "@/store/hooks";
 import { socket } from "@/socket";
 import MessageField from "./MessageField";
 import MessageList from "./MessageList";
+import ChatHeader from "./ChatHeader";
 
 const Chat = () => {
   const id = useParams().id;
@@ -111,25 +111,7 @@ const Chat = () => {
 
   return (
     <section className="space-y-4">
-      <header className="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-linear-to-r from-emerald-50 via-white to-emerald-50/70 p-4 dark:from-emerald-950/30 dark:via-emerald-900/20 dark:to-emerald-950/30">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-16 -right-8 h-36 w-36 rounded-full bg-emerald-500/20 blur-3xl"
-        />
-        <div className="relative flex items-center gap-3">
-          <span className="grid size-10 place-items-center rounded-full border border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
-            <MessagesSquareIcon className="size-5" />
-          </span>
-          <div>
-            <h1 className="font-heading text-xl font-semibold text-emerald-900 dark:text-emerald-200">
-              {chatTitle}
-            </h1>
-            <p className="text-sm text-emerald-700/80 dark:text-emerald-300/80">
-              {messages.length} message{messages.length === 1 ? "" : "s"}
-            </p>
-          </div>
-        </div>
-      </header>
+      <ChatHeader title={chatTitle} messageCount={messages.length} />
 
       <MessageList
         messageHistory={messages}

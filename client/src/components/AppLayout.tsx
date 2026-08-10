@@ -6,6 +6,7 @@ import AuthSync from "@/components/AuthSync";
 import { Button } from "./ui/button";
 import useLogout from "@/hooks/useLogout";
 import Message from "./Message";
+import UserAvatar from "./ui/UserAvatar";
 
 const AppLayout = () => {
   const user = useAppSelector((state) => state.user.data);
@@ -57,17 +58,12 @@ const AppLayout = () => {
                     aria-expanded={isUserMenuOpen}
                     aria-label="Open user menu"
                   >
-                    {user.avatarUrl ? (
-                      <img
-                        src={user.avatarUrl}
-                        alt={`${user.username} avatar`}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-sm font-semibold uppercase">
-                        {user.username.charAt(0)}
-                      </div>
-                    )}
+                    <UserAvatar
+                      src={user.avatarUrl}
+                      name={user.username}
+                      className="h-full w-full"
+                      fallbackClassName="text-sm"
+                    />
                   </button>
 
                   {isUserMenuOpen && (

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { createOrGetChat } from "@/services/chatService";
 import { useMutation } from "@tanstack/react-query";
 import { formatDate } from "@/utils/formatDate";
+import UserAvatar from "../ui/UserAvatar";
 
 interface UserCardProps {
   user: User;
@@ -26,7 +27,6 @@ const Field = ({ label, value }: { label: string; value: string }) => {
 const UserCard = ({ user }: UserCardProps) => {
   const [open, setOpen] = useState(false);
   const name = user.username || "Unknown User";
-  const avatar = user.avatarUrl ?? "";
   const initials = name.slice(0, 2).toUpperCase();
   const navigate = useNavigate();
   const getChatIdMutation = useMutation({ mutationFn: createOrGetChat });
@@ -43,19 +43,13 @@ const UserCard = ({ user }: UserCardProps) => {
   return (
     <article className="overflow-hidden rounded-2xl border border-emerald-200 bg-linear-to-b from-emerald-50 to-white shadow-sm transition-shadow duration-200 hover:shadow-md dark:border-emerald-800/60 dark:from-emerald-950/40 dark:to-emerald-900/20 dark:hover:shadow-emerald-950/30">
       <div className="flex items-center gap-3 border-b border-emerald-100 px-4 py-3 dark:border-emerald-800/50">
-        {avatar ? (
-          <img
-            src={avatar}
-            alt={`${name} avatar`}
-            width={42}
-            height={42}
-            className="h-11 w-11 rounded-full border-2 border-emerald-300 object-cover dark:border-emerald-500/60"
-          />
-        ) : (
-          <div className="grid h-11 w-11 place-items-center rounded-full border-2 border-emerald-300 bg-emerald-600 text-sm font-bold text-white dark:border-emerald-500/70 dark:bg-emerald-700">
-            {initials || "U"}
-          </div>
-        )}
+        <UserAvatar
+          src={user.avatarUrl}
+          name={name}
+          fallback={initials || "U"}
+          className="h-11 w-11 border-2 border-emerald-300 dark:border-emerald-500/60"
+          fallbackClassName="text-sm font-bold text-white bg-emerald-600 dark:bg-emerald-700"
+        />
 
         <div className="min-w-0 flex-1">
           <p className="truncate text-base font-semibold text-emerald-950 dark:text-emerald-100">
