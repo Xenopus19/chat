@@ -5,4 +5,5 @@ export interface MessageForClient {
   userId: string;
   createdAt: string;
   updatedAt: string;
+  status: string;
 }

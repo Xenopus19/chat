@@ -7,10 +7,12 @@ import ServerError from "./serverError";
 export interface ServerToClientEvents {
   messageCreated: (message: MessageForClient) => void;
   exception: (error: ServerError) => void;
+  messageViewed: (message: MessageForClient) => void;
 }
 
 export interface ClientToServerEvents {
   createMessage: (message: NewMessage) => void;
+  viewMessage: (messageId: string) => void;
 }
 
 export interface InterServerEvents {

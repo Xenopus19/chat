@@ -6,14 +6,17 @@ import type {
   ServerToClientEvents,
   InterServerEvents,
   SocketData,
-  MessageForClient,
 } from "./types/socketTypes";
 import { ZodError } from "zod";
 import { CLIENT_ORIGIN } from "./config";
 import { extractUserMiddleware } from "./services/socketAuthService";
 import { CreateMessageSchema } from "./schemas/createMessage";
-import { addMessage } from "./services/messageService";
-import { joinSocketToUserChats, setSocketServer } from "./services/socketService";
+import { addMessage, getMessageById } from "./services/messageService";
+import {
+  joinSocketToUserChats,
+  setSocketServer,
+} from "./services/socketService";
+import { MessageForClient } from "./types";
 
 let io: Server<
   ClientToServerEvents,
@@ -62,10 +65,11 @@ export const initSocket = (httpServer: HttpServer): Server => {
         const newMessageForClient: MessageForClient = {
           id: createdMessage.id,
           text: createdMessage.text,
-          chatId: createdMessage.chatId,
-          userId: createdMessage.userId,
+          chatId: String(createdMessage.chatId),
+          userId: String(createdMessage.userId),
           createdAt: createdMessage.createdAt.toISOString(),
           updatedAt: createdMessage.updatedAt.toISOString(),
+          status: createdMessage.status,
         };
 
         io?.to(message.chatId).emit("messageCreated", newMessageForClient);
@@ -87,6 +91,21 @@ export const initSocket = (httpServer: HttpServer): Server => {
           });
         }
       }
+    });
+
+    socket.on("viewMessage", async (messageId) => {
+      const message = await getMessageById(messageId);
+      message.status = "READ";
+      await message.save();
+      const messageForClient: MessageForClient = {
+        ...message.toObject(),
+        id: String(message._id),
+        chatId: String(message.chatId),
+        userId: String(message.userId),
+        createdAt: message.createdAt.toISOString(),
+        updatedAt: message.updatedAt.toISOString(),
+      };
+      io?.to(String(message.chatId)).emit("messageViewed", messageForClient);
     });
   });
 

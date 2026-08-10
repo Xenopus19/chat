@@ -27,4 +27,5 @@ export interface Message {
   userId: string;
   createdAt: string;
   updatedAt: string;
+  status: string;
 }

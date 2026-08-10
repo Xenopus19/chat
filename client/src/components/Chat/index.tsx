@@ -37,28 +37,37 @@ const Chat = () => {
 
   useEffect(() => {
     socket.on("messageCreated", (message: Message) => {
-      console.log("Received messageCreated event:", message);
       if (message.chatId !== id) {
         return;
       }
 
-      addMessageToCache(message);
+      queryClient.setQueryData(
+        ["messages", id],
+        (oldMessages: Message[] | undefined) => {
+          if (!oldMessages) return [message];
+          return [...oldMessages, message];
+        },
+      );
+    });
+
+    socket.on("messageViewed", (message: Message) => {
+      if (message.chatId !== id) {
+        return;
+      }
+      queryClient.setQueryData(
+        ["messages", id],
+        (oldMessages: Message[] | undefined) => {
+          if (!oldMessages) return [message];
+          return oldMessages.map((m) => (m.id === message.id ? message : m));
+        },
+      );
     });
 
     return () => {
       socket.off("messageCreated");
+      socket.off("messageViewed");
     };
   }, [id]);
-
-  const addMessageToCache = (message: Message) => {
-    queryClient.setQueryData(
-      ["messages", id],
-      (oldMessages: Message[] | undefined) => {
-        if (!oldMessages) return [message];
-        return [...oldMessages, message];
-      },
-    );
-  };
 
   const chatTitle = useMemo(() => {
     if (!chat?.name?.trim()) {
