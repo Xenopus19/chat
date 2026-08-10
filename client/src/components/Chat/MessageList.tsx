@@ -1,13 +1,20 @@
 import { useEffect, useRef } from "react";
 import type { Message } from "@/types";
-import { formatDate } from "@/utils/formatDate";
+import ChatMessage from "./ChatMessage";
 
 interface MessageListProps {
 	messageHistory: Message[];
 	currentUserId?: string;
+	otherUserAvatarUrl?: string | null;
+	otherUserName?: string;
 }
 
-const MessageList = ({ messageHistory, currentUserId }: MessageListProps) => {
+const MessageList = ({
+	messageHistory,
+	currentUserId,
+	otherUserAvatarUrl,
+	otherUserName,
+}: MessageListProps) => {
 	const listRef = useRef<HTMLUListElement | null>(null);
 
 	useEffect(() => {
@@ -48,39 +55,13 @@ const MessageList = ({ messageHistory, currentUserId }: MessageListProps) => {
 					const isOwnMessage = currentUserId === message.userId;
 
 					return (
-						<li
+						<ChatMessage
 							key={message.id}
-							className={`flex ${isOwnMessage ? "justify-end" : "justify-start"}`}
-						>
-							<article
-								className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm sm:max-w-[70%] ${
-									isOwnMessage
-										? "bg-emerald-600 text-white"
-										: "border border-emerald-500/20 bg-emerald-50/70 text-emerald-950 dark:bg-emerald-950/40 dark:text-emerald-100"
-								}`}
-							>
-								<p className="whitespace-pre-wrap wrap-break-word text-sm leading-relaxed">
-									{message.text}
-								</p>
-								<p
-									className={`mt-2 text-[11px] ${
-										isOwnMessage
-											? "text-emerald-100/85"
-											: "text-emerald-700/80 dark:text-emerald-300/80"
-									}`}
-								>
-									{formatDate(message.createdAt, {
-										fallback: "Unknown time",
-										options: {
-											month: "short",
-											day: "2-digit",
-											hour: "2-digit",
-											minute: "2-digit",
-										},
-									})}
-								</p>
-							</article>
-						</li>
+							message={message}
+							isOwnMessage={isOwnMessage}
+							otherUserAvatarUrl={otherUserAvatarUrl}
+							otherUserName={otherUserName}
+						/>
 					);
 				})}
 			</ul>

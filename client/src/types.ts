@@ -1,7 +1,7 @@
 export interface User {
-  id: string; 
+  id: string;
   username: string;
-  birthdate: string; 
+  birthdate: string;
   description: string;
   avatarUrl: string | null;
   createdAt: string;
@@ -11,6 +11,11 @@ export interface User {
 export interface Chat {
   id: string;
   name?: string | null;
+  otherUser?: {
+    id: string;
+    username: string;
+    avatarUrl: string | null;
+  } | null;
   createdAt: string;
   updatedAt: string;
 }

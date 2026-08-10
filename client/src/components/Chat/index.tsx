@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { MessagesSquareIcon } from "lucide-react";
@@ -62,7 +62,7 @@ const Chat = () => {
 
   const chatTitle = useMemo(() => {
     if (!chat?.name?.trim()) {
-      return "Conversation";
+      return `Conversation with ${chat?.otherUser?.username ?? "Unknown User"}`;
     }
 
     return chat.name.trim();
@@ -122,7 +122,12 @@ const Chat = () => {
         </div>
       </header>
 
-      <MessageList messageHistory={messages} currentUserId={user?.id} />
+      <MessageList
+        messageHistory={messages}
+        currentUserId={user?.id}
+        otherUserAvatarUrl={chat.otherUser?.avatarUrl}
+        otherUserName={chat.otherUser?.username}
+      />
       <MessageField onSendMessage={onSendMessage} />
     </section>
   );

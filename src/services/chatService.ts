@@ -3,30 +3,70 @@ import { ChatMembership } from "../models/ChatMembership";
 import { Chat, type ChatDocument } from "../models/Chat";
 import { User } from "../models/User";
 
-export const getChatById = async (chatId: Types.ObjectId): Promise<ChatDocument | null> => {
-    return await Chat.findById(chatId);
+export interface ChatOtherUser {
+  id: string;
+  username: string;
+  avatarUrl: string | null;
 }
+
+export interface ChatWithOtherUser {
+  id: string;
+  name: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  otherUser: ChatOtherUser | null;
+}
+
+export const getChatById = async (
+  chatId: Types.ObjectId,
+  userId: Types.ObjectId,
+): Promise<ChatWithOtherUser | null> => {
+  const otherUser = await getOtherUserInChat(chatId, userId);
+  const chat = await Chat.findById(chatId);
+
+  if (!chat || !otherUser) {
+    return null;
+  }
+
+  return {
+    id: chat.id,
+    name: chat.name ?? otherUser.username,
+    createdAt: chat.createdAt,
+    updatedAt: chat.updatedAt,
+    otherUser,
+  };
+};
 
 export const createOrFindChatByIds = async (
   userId1: Types.ObjectId,
   userId2: Types.ObjectId,
 ): Promise<ChatDocument> => {
-    const chat = await getChatByUsersIds(userId1, userId2);
-    if(chat) {
-        return chat;
-    }
-    const newChat = new Chat({});
-    await newChat.save();
-    const newChatMembership1 = new ChatMembership({ chatId: newChat._id, userId: userId1 });
-    const newChatMembership2 = new ChatMembership({ chatId: newChat._id, userId: userId2 });
-    await newChatMembership1.save();
-    await newChatMembership2.save();
-    return newChat;
+  const chat = await getChatByUsersIds(userId1, userId2);
+  if (chat) {
+    return chat;
+  }
+  const newChat = new Chat({});
+  await newChat.save();
+  const newChatMembership1 = new ChatMembership({
+    chatId: newChat._id,
+    userId: userId1,
+  });
+  const newChatMembership2 = new ChatMembership({
+    chatId: newChat._id,
+    userId: userId2,
+  });
+  await newChatMembership1.save();
+  await newChatMembership2.save();
+  return newChat;
 };
 
-export const getUserChats = async (userId: Types.ObjectId | string): Promise<ChatDocument[]> => {
+export const getUserChats = async (
+  userId: Types.ObjectId | string,
+): Promise<ChatDocument[]> => {
   const id = typeof userId === "string" ? new Types.ObjectId(userId) : userId;
-  const memberships = await ChatMembership.find({ userId: id }).select("chatId");
+  const memberships = await ChatMembership.find({ userId: id }).select(
+    "chatId",
+  );
   const chatIds = memberships.map((membership) => membership.chatId);
   const chats = (await Chat.find({ _id: { $in: chatIds } })) as ChatDocument[];
   await Promise.all(
@@ -45,17 +85,43 @@ export const getUserChats = async (userId: Types.ObjectId | string): Promise<Cha
   );
 
   return chats;
-}
+};
 
-export const getOtherUserInChat = async (chatId: Types.ObjectId, userId: Types.ObjectId) => {
+export const getOtherUserInChat = async (
+  chatId: Types.ObjectId,
+  userId: Types.ObjectId,
+) => {
   const memberships = await ChatMembership.find({ chatId }).select("userId");
-  const otherMembership = memberships.find((membership) => !membership.userId.equals(userId));
-  if(!otherMembership) {
+  const currentUserMembership = memberships.find((membership) =>
+    membership.userId.equals(userId),
+  );
+
+  if (!currentUserMembership) {
     return null;
   }
-  const otherUser = otherMembership ? await User.findById(otherMembership.userId) : null;
-  return otherUser;
-}
+
+  const otherMembership = memberships.find(
+    (membership) => !membership.userId.equals(userId),
+  );
+
+  if (!otherMembership) {
+    return null;
+  }
+
+  const otherUser = await User.findById(otherMembership.userId)
+    .select("username avatarUrl")
+    .lean<{ _id: Types.ObjectId; username: string; avatarUrl: string | null }>();
+
+  if (!otherUser) {
+    return null;
+  }
+
+  return {
+    id: otherUser._id.toString(),
+    username: otherUser.username,
+    avatarUrl: otherUser.avatarUrl ?? null,
+  };
+};
 
 export const getChatByUsersIds = async (
   userId1: Types.ObjectId,

@@ -44,10 +44,25 @@ chatsRouter.get("/", tokenExtractor, async (req: CustomRequest, res) => {
 chatsRouter.get("/:chatId", tokenExtractor, async (req: CustomRequest, res) => {
   try {
     const chatId = req.params.chatId;
+    const userId = req.decodedToken?.id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "User ID is missing." });
+    }
+
     if (!chatId || typeof chatId !== "string") {
       return res.status(400).json({ message: "Chat ID is missing." });
     }
-    const chat = await getChatById(new Types.ObjectId(chatId));
+
+    const chat = await getChatById(
+      new Types.ObjectId(chatId),
+      new Types.ObjectId(userId),
+    );
+
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found." });
+    }
+
     return res.json(chat);
   } catch (error) {
     return res.status(400).json({
