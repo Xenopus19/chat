@@ -30,12 +30,6 @@ const AppLayout = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (!user) {
-      setIsUserMenuOpen(false);
-    }
-  }, [user]);
-
   return (
     <AuthSync>
       <div className="min-h-screen bg-background text-foreground">

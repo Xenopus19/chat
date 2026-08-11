@@ -31,7 +31,7 @@ const AuthSync = ({ children }: AuthSyncProps) => {
       }
       logoutUser();
     }
-  }, [user, isError, isLoading, dispatch]);
+  }, [user, isError, isLoading, dispatch, logoutUser]);
 
   if (isLoading) {
     return <div>Loading...</div>;

@@ -67,7 +67,7 @@ const Chat = () => {
       socket.off("messageCreated");
       socket.off("messageViewed");
     };
-  }, [id]);
+  }, [id, queryClient]);
 
   const chatTitle = useMemo(() => {
     if (!chat?.name?.trim()) {
