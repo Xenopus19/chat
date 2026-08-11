@@ -20,9 +20,9 @@ const getMe = async (token: string | null) => {
   return response.data;
 };
 
-const getAllUsers = async () => {
-  const response = await api.get<User[]>("/users");
+const getAllUsers = async (username?: string) => {
+  const response = await api.get<User[]>("/users", { params: { username } });
   return response.data;
-}
+};
 
 export { createUser, loginUser, getMe, getAllUsers };

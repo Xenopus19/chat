@@ -4,9 +4,23 @@ import { User } from "../models/User";
 import { NewUser } from "../schemas/createUser";
 import bcrypt from "bcrypt";
 
-export const getAllUsers = async () => {
+interface Filter {
+  $regex: string;
+  $options: string;
+}
+
+interface UserFilters {
+  username?: Filter;
+}
+
+export const getAllUsers = async (username?:string) => {
   try {
-    const users = await User.find();
+    const filter: UserFilters = {};
+
+    if (username) {
+      filter.username = { $regex: username, $options: 'i' };
+    }
+    const users = await User.find(filter);
     return users;
   } catch (error) {
     throw new Error(error instanceof Error ? error.message : String(error));

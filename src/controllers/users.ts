@@ -8,7 +8,8 @@ const userRouter = Router();
 
 userRouter.get("/", async (req, res) => {
   try {
-    const users = await getAllUsers();
+    const search = typeof req.query.username === "string" ? req.query.username : undefined;
+    const users = await getAllUsers(search);
     return res.json(users);
   } catch (error) {
     return res.status(400).json({
@@ -45,11 +46,6 @@ userRouter.post("/", async (req, res) => {
     const user = await addUser(newUser);
     res.json(user);
   } catch (error) {
-    console.log("=== DEBUG ERROR START ===");
-  console.log("Constructor name:", (error as object)?.constructor?.name);
-  console.log("Error code property:", (error as any)?.code);
-  console.log("Full error object keys:", error instanceof Object ? Reflect.ownKeys(error) : typeof error);
-  console.log("=== DEBUG ERROR END ===");
     if (
       error instanceof mongoose.mongo.MongoServerError &&
       error.code === 11000
