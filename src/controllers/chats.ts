@@ -58,6 +58,7 @@ chatsRouter.get("/:chatId", tokenExtractor, async (req: CustomRequest, res) => {
       new Types.ObjectId(chatId),
       new Types.ObjectId(userId),
     );
+    
 
     if (!chat) {
       return res.status(404).json({ message: "Chat not found." });

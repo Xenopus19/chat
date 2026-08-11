@@ -56,6 +56,10 @@ export const initSocket = (httpServer: HttpServer): Server => {
     socket.on("viewMessage", async (messageId) => {
       await handleViewMessage(messageId);
     });
+
+    socket.on("joinChatRoom", async (chatId) => {
+      await socket.join(chatId);
+    });
   });
 
   return io;

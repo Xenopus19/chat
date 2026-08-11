@@ -13,6 +13,7 @@ export interface ServerToClientEvents {
 export interface ClientToServerEvents {
   createMessage: (message: NewMessage) => void;
   viewMessage: (messageId: string) => void;
+  joinChatRoom: (chatId: string) => void;
 }
 
 export interface InterServerEvents {

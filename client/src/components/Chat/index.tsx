@@ -36,6 +36,10 @@ const Chat = () => {
   });
 
   useEffect(() => {
+    if (id) {
+      socket.emit("joinChatRoom", id);
+    }
+
     socket.on("messageCreated", (message: Message) => {
       if (message.chatId !== id) {
         return;

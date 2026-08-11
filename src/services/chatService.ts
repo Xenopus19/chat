@@ -91,8 +91,10 @@ export const getOtherUserInChat = async (
   chatId: Types.ObjectId,
   userId: Types.ObjectId,
 ) => {
-  const memberships = await ChatMembership.find({ chatId }).select("userId");
-  const currentUserMembership = memberships.find((membership) =>
+  const membershipsForChat = await ChatMembership.find({ chatId }).select(
+    "userId",
+  );
+  const currentUserMembership = membershipsForChat.find((membership) =>
     membership.userId.equals(userId),
   );
 
@@ -100,9 +102,10 @@ export const getOtherUserInChat = async (
     return null;
   }
 
-  const otherMembership = memberships.find(
-    (membership) => !membership.userId.equals(userId),
+  const otherMembership = membershipsForChat.find(
+    (membership) => membership.userId.toString() !== userId.toString(),
   );
+
 
   if (!otherMembership) {
     return null;
@@ -110,7 +113,11 @@ export const getOtherUserInChat = async (
 
   const otherUser = await User.findById(otherMembership.userId)
     .select("username avatarUrl")
-    .lean<{ _id: Types.ObjectId; username: string; avatarUrl: string | null }>();
+    .lean<{
+      _id: Types.ObjectId;
+      username: string;
+      avatarUrl: string | null;
+    }>();
 
   if (!otherUser) {
     return null;
