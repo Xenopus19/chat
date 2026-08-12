@@ -48,6 +48,7 @@ export const initSocket = (httpServer: HttpServer): Server => {
     }
 
     await joinSocketToUserChats(socket);
+    await socket.join(user.id);
 
     socket.on("createMessage", async (messageData) => {
       await handleCreateMessage(socket, messageData, user.id);

@@ -3,6 +3,10 @@ import { useAppDispatch } from "@/store/hooks";
 import { handleApiError } from "@/utils/handleApiError";
 import { useQuery } from "@tanstack/react-query";
 import ChatsList from "./ChatsList";
+import { useEffect } from "react";
+import { socket } from "@/socket";
+import type { Message } from "@/types";
+import { makeMessage } from "@/reducers/message";
 
 const MyChats = () => {
   const {
@@ -16,6 +20,19 @@ const MyChats = () => {
   });
 
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    socket.on('messageCreated', (message: Message) => {
+      const chat = chats?.find((chat) => chat.id === message.chatId);
+      if(!chat){
+            dispatch(makeMessage("A new chat with you have been added.", false, "Reload the page to see it."));
+      }
+      });
+
+    return () => {
+      socket.off('messageCreated');
+    };
+  }, [chats]);
 
   if (isLoading || !chats) {
     return <div>Loading...</div>;

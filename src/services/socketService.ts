@@ -46,7 +46,7 @@ export const joinSocketToUserChats = async (
   });
 };
 
-export const joinUserToChatRoom = (userId: string, chatId: string): void => {
+export const joinUserToChatRoom = async (userId: string, chatId: string): Promise<void> => {
   if (!io) {
     return;
   }
