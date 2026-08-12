@@ -20,6 +20,11 @@ export interface Chat {
   updatedAt: string;
 }
 
+export interface ChatWithStatistics extends Chat {
+  unreadCount: number;
+  lastMessage: Message | null;
+}
+
 export interface Message {
   id: string;
   text: string;

@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { ChatMembership } from "../models/ChatMembership";
 import { Chat, type ChatDocument } from "../models/Chat";
 import { User } from "../models/User";
+import { Message } from "../models/Message";
 
 export interface ChatOtherUser {
   id: string;
@@ -9,12 +10,32 @@ export interface ChatOtherUser {
   avatarUrl: string | null;
 }
 
-export interface ChatWithOtherUser {
+interface ChatBase {
+  id: string;
+  name: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ChatWithOtherUser extends ChatBase {
+  otherUser: ChatOtherUser | null;
+}
+
+export interface ChatLastMessage {
+  id: string;
+  text: string;
+  createdAt: Date;
+  senderId: string;
+}
+
+export interface UserChatListItem {
   id: string;
   name: string | null;
   createdAt: Date;
   updatedAt: Date;
   otherUser: ChatOtherUser | null;
+  unreadCount: number;
+  lastMessage: ChatLastMessage | null;
 }
 
 export const getChatById = async (
@@ -62,29 +83,55 @@ export const createOrFindChatByIds = async (
 
 export const getUserChats = async (
   userId: Types.ObjectId | string,
-): Promise<ChatDocument[]> => {
-  const id = typeof userId === "string" ? new Types.ObjectId(userId) : userId;
-  const memberships = await ChatMembership.find({ userId: id }).select(
-    "chatId",
-  );
-  const chatIds = memberships.map((membership) => membership.chatId);
-  const chats = (await Chat.find({ _id: { $in: chatIds } })) as ChatDocument[];
-  await Promise.all(
+): Promise<UserChatListItem[]> => {
+  const currentUserId = typeof userId === "string" ? new Types.ObjectId(userId) : userId;
+
+  const memberships = await ChatMembership.find({ userId: currentUserId }).select("chatId").lean();
+  const chatIds = memberships.map((m) => m.chatId);
+
+  if (chatIds.length === 0) {
+    return [];
+  }
+
+  const chats = await Chat.find({ _id: { $in: chatIds } }).lean();
+
+  const userChats = await Promise.all(
     chats.map(async (chat) => {
-      if (chat.name) {
-        return;
-      }
+      const [otherUser, unreadCount, lastMessageDoc] = await Promise.all([
+        getOtherUserInChat(chat._id, currentUserId),
+        Message.countDocuments({
+          chatId: chat._id,
+          status: "DELIVERED",
+          userId: { $ne: currentUserId },
+        }),
+        Message.findOne({ chatId: chat._id })
+          .sort({ createdAt: -1 })
+          .select("_id text createdAt userId")
+          .lean(),
+      ]);
 
-      const otherUser = await getOtherUserInChat(chat._id, id);
-      if (!otherUser?.username) {
-        return;
-      }
+      const lastMessage: ChatLastMessage | null = lastMessageDoc
+        ? {
+            id: lastMessageDoc._id.toString(),
+            text: lastMessageDoc.text,
+            createdAt: lastMessageDoc.createdAt,
+            senderId: lastMessageDoc.userId.toString(),
+          }
+        : null;
 
-      chat.name = otherUser.username;
+      return {
+        id: chat._id.toString(),
+        name: chat.name ?? otherUser?.username ?? null,
+        createdAt: chat.createdAt,
+        updatedAt: chat.updatedAt,
+        otherUser,
+        unreadCount,
+        lastMessage,
+      };
     }),
   );
 
-  return chats;
+  return userChats;
 };
 
 export const getOtherUserInChat = async (
@@ -105,7 +152,6 @@ export const getOtherUserInChat = async (
   const otherMembership = membershipsForChat.find(
     (membership) => membership.userId.toString() !== userId.toString(),
   );
-
 
   if (!otherMembership) {
     return null;

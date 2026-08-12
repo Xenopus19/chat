@@ -1,5 +1,5 @@
 import api from "@/api";
-import type { Chat } from "@/types";
+import type { Chat, ChatWithStatistics } from "@/types";
 
 export const createOrGetChat = async (userId: string) => {
     const response = await api.post(`/chats`, { userId });
@@ -11,8 +11,8 @@ export const fetchChatById = async (chatId: string) => {
     return response.data;
 }
 
-export const getUserChats = async (): Promise<Chat[]> => {
-    const response = await api.get(`/chats`);
+export const getUserChats = async (): Promise<ChatWithStatistics[]> => {
+    const response = await api.get<ChatWithStatistics[]>(`/chats`);
     return response.data;
 }
 

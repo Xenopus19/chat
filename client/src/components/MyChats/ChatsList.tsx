@@ -1,9 +1,9 @@
-import type { Chat } from "@/types";
+import type { ChatWithStatistics } from "@/types";
 import { Link } from "react-router-dom";
 import ChatCard from "./ChatCard";
 
 interface ChatsListProps {
-	chats: Chat[];
+	chats: ChatWithStatistics[];
 }
 
 const ChatsList = ({ chats }: ChatsListProps) => {

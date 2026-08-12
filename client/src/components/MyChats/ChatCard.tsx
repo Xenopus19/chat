@@ -1,14 +1,16 @@
-import type { Chat } from "@/types";
+import type { ChatWithStatistics } from "@/types";
 import { Link } from "react-router-dom";
 import { formatDate } from "@/utils/formatDate";
 
 interface ChatCardProps {
-	chat: Chat;
+	chat: ChatWithStatistics;
 	index: number;
 }
 
 const ChatCard = ({ chat, index }: ChatCardProps) => {
 	const chatName = chat.name?.trim() || `Conversation ${index + 1}`;
+	const lastMessageText = chat.lastMessage?.text?.trim();
+	const hasUnreadMessages = chat.unreadCount > 0;
 
 	return (
 		<li>
@@ -35,23 +37,36 @@ const ChatCard = ({ chat, index }: ChatCardProps) => {
 						</p>
 					</div>
 
-					<span className="shrink-0 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold tracking-wide text-emerald-700 transition-colors group-hover:bg-emerald-500/15 dark:text-emerald-300">
-						Open
-					</span>
+					{hasUnreadMessages ? (
+						<span className="shrink-0 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold tracking-wide text-emerald-700 transition-colors group-hover:bg-emerald-500/15 dark:text-emerald-300">
+							{chat.unreadCount} unread
+						</span>
+					) : (
+						<span className="shrink-0 rounded-full border border-slate-300/70 bg-slate-100 px-2.5 py-1 text-xs font-medium tracking-wide text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+							All caught up
+						</span>
+					)}
 				</div>
 
-				<p className="mt-3 text-sm text-emerald-800/80 dark:text-emerald-200/80">
-					Last activity:{" "}
-					{formatDate(chat.updatedAt, {
-						options: {
-							year: "numeric",
-							month: "short",
-							day: "2-digit",
-							hour: "2-digit",
-							minute: "2-digit",
-						},
-					})}
-				</p>
+				<div className="mt-3 flex items-center justify-between gap-3">
+					<p className="min-w-0 flex-1 text-sm text-emerald-800/80 dark:text-emerald-200/80">
+						<span className="font-medium text-emerald-950 dark:text-emerald-50">Last message:</span>{" "}
+						<span className="line-clamp-2 break-words">{lastMessageText || "No messages yet"}</span>
+					</p>
+					{chat.lastMessage && (
+						<p className="shrink-0 text-[11px] text-muted-foreground">
+							{formatDate(chat.lastMessage.createdAt, {
+								options: {
+									year: "numeric",
+									month: "short",
+									day: "2-digit",
+									hour: "2-digit",
+									minute: "2-digit",
+								},
+							})}
+						</p>
+					)}
+				</div>
 			</Link>
 		</li>
 	);

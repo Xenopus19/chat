@@ -1,11 +1,11 @@
 import { getUserChats } from "@/services/chatService";
 import { useAppDispatch } from "@/store/hooks";
 import { handleApiError } from "@/utils/handleApiError";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ChatsList from "./ChatsList";
 import { useEffect } from "react";
 import { socket } from "@/socket";
-import type { Message } from "@/types";
+import type { ChatWithStatistics, Message } from "@/types";
 import { makeMessage } from "@/reducers/message";
 
 const MyChats = () => {
@@ -20,19 +20,47 @@ const MyChats = () => {
   });
 
   const dispatch = useAppDispatch();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    socket.on('messageCreated', (message: Message) => {
-      const chat = chats?.find((chat) => chat.id === message.chatId);
-      if(!chat){
-            dispatch(makeMessage("A new chat with you have been added.", false, "Reload the page to see it."));
-      }
+    const handleMessageCreated = (message: Message) => {
+      queryClient.setQueryData<ChatWithStatistics[]>(["userChats"], (currentChats) => {
+        if (!currentChats) {
+          return currentChats;
+        }
+
+        const chatIndex = currentChats.findIndex((chat) => chat.id === message.chatId);
+        if (chatIndex === -1) {
+          dispatch(
+            makeMessage(
+              "A new chat with you have been added.",
+              false,
+              "Reload the page to see it."
+            )
+          );
+          return currentChats;
+        }
+
+        const updatedChats = [...currentChats];
+        const currentChat = updatedChats[chatIndex];
+
+        updatedChats[chatIndex] = {
+          ...currentChat,
+          lastMessage: message,
+          updatedAt: message.createdAt,
+          unreadCount: currentChat.unreadCount + 1,
+        };
+
+        return updatedChats;
       });
+    };
+
+    socket.on("messageCreated", handleMessageCreated);
 
     return () => {
-      socket.off('messageCreated');
+      socket.off("messageCreated", handleMessageCreated);
     };
-  }, [chats]);
+  }, [dispatch, queryClient]);
 
   if (isLoading || !chats) {
     return <div>Loading...</div>;
