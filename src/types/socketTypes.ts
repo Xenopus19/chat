@@ -1,8 +1,8 @@
-import { Socket } from "socket.io";
-import { MessageForClient } from "./index";
-import { NewMessage } from "../schemas/createMessage";
-import { TokenUser } from "../services/loginService";
-import ServerError from "./serverError";
+import type { Socket } from "socket.io";
+import type { MessageForClient } from "./index";
+import type { NewMessage } from "../schemas/createMessage";
+import type { TokenUser } from "../services/loginService";
+import type ServerError from "./serverError";
 
 export interface ServerToClientEvents {
   messageCreated: (message: MessageForClient) => void;

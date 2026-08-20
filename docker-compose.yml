@@ -1,0 +1,43 @@
+services:
+  app:
+    image: prod-front
+    build:
+      context: ./
+      dockerfile: client/Dockerfile
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+        - VITE_BUCKET_URL=${VITE_BUCKET_URL}
+        - VITE_SOCKET_URL=${VITE_SOCKET_URL}
+    container_name: prod-front
+    environment:
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+      - VITE_BUCKET_URL=${VITE_BUCKET_URL}
+      - VITE_SOCKET_URL=${VITE_SOCKET_URL}
+
+  nginx:
+    image: nginx:1.29
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 8080:80
+    container_name: reverse-proxy
+    depends_on:
+      app:
+        condition: service_started
+      backend:
+        condition: service_started
+
+  backend:
+    image: prod-backend
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: prod-backend
+    environment:
+      - PORT=${PORT:-3001}
+      - DATABASE_URL=${DATABASE_URL}
+      - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID}
+      - R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID}
+      - R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY}
+      - BUCKET_NAME=${BUCKET_NAME}
+      - JWT_SECRET=${JWT_SECRET}
