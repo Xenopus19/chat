@@ -10,6 +10,8 @@
       "@/*": ["./src/*"],
       "@server-types/*": ["../src/types/*"]
     },
-    "ignoreDeprecations": "6.0"
+    "ignoreDeprecations": "6.0",
+      "skipLibCheck": true,
+    "isolatedModules": true,
   }
 }
