@@ -4,6 +4,7 @@ import { useAppDispatch } from "../store/hooks";
 import { setUser } from "../reducers/user";
 import useLogout from "../hooks/useLogout";
 import { socket } from "@/socket";
+import Spinner from "@/components/Spinner";
 
 type AuthSyncProps = {
   children: ReactNode;
@@ -34,7 +35,11 @@ const AuthSync = ({ children }: AuthSyncProps) => {
   }, [user, isError, isLoading, dispatch, logoutUser]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spinner />
+      </div>
+    );
   }
 
   return <>{children}</>;

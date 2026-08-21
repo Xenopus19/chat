@@ -18,7 +18,7 @@ app.use('/api/chats', chatsRouter);
 app.use('/api/messages', messagesRouter);
 
 app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok", service: "backend", timestamp: new Date().toISOString() });
+  res.status(200).json({ status: "ok", service: "backend", timestamp: new Date().toISOString() });
 });
 
 export default app;

@@ -1,6 +1,7 @@
 import { useAppSelector } from "@/store/hooks";
 import { type ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
+import Spinner from "@/components/Spinner";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -12,7 +13,11 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const location = useLocation();
 
   if (isInitializing) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spinner />
+      </div>
+    );
   }
 
   if (!user) {

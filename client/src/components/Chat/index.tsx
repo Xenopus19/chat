@@ -9,6 +9,7 @@ import { socket } from "@/socket";
 import MessageField from "./MessageField";
 import MessageList from "./MessageList";
 import ChatHeader from "./ChatHeader";
+import Spinner from "@/components/Spinner";
 
 const Chat = () => {
   const id = useParams().id;
@@ -82,7 +83,11 @@ const Chat = () => {
   }, [chat]);
 
   if (isChatLoading || isMessagesLoading || !messages) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Spinner />
+      </div>
+    );
   }
 
   if (!chat || !messages || !id) {

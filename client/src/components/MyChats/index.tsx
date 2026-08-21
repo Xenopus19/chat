@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { socket } from "@/socket";
 import type { ChatWithStatistics, Message } from "@/types";
 import { makeMessage } from "@/reducers/message";
+import Spinner from "@/components/Spinner";
 
 const MyChats = () => {
   const {
@@ -63,7 +64,11 @@ const MyChats = () => {
   }, [dispatch, queryClient]);
 
   if (isLoading || !chats) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Spinner />
+      </div>
+    );
   }
 
   if (isError) {

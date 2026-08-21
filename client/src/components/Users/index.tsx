@@ -7,6 +7,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { useState } from "react";
 import { Field } from "../ui/field";
 import { Input } from "../ui/input";
+import Spinner from "@/components/Spinner";
 
 const Users = () => {
   const [search, setSearch] = useState("");
@@ -24,7 +25,11 @@ const Users = () => {
   const dispatch = useAppDispatch();
 
   if (isLoading || !users) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Spinner />
+      </div>
+    );
   }
 
   if(isError) {

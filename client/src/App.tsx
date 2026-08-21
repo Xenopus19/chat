@@ -1,5 +1,6 @@
 import "./App.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import BackendHealthCheck from "./components/BackendHealthCheck";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SignUp from "./components/SignUp";
 import { useState } from "react";
@@ -15,7 +16,11 @@ import Chat from "./components/Chat";
 
 const router = createBrowserRouter([
   {
-    element: <AppLayout />,
+    element: (
+      <BackendHealthCheck>
+        <AppLayout />
+      </BackendHealthCheck>
+    ),
     children: [
       {
         path: "/",
